@@ -42,9 +42,12 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<Scrap> scrapList = new ArrayList<>();
 
-    public void setNameAndEmail(String name, String email){
+    public void setMemberInfo(String imageUrl, String name, String email, String phoneNumber, Insurance insurance) {
+        this.imageUrl = imageUrl;
         this.name = name;
         this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.insurance = insurance;
     }
 
 }

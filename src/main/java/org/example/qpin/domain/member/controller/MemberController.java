@@ -3,6 +3,7 @@ package org.example.qpin.domain.member.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.example.qpin.domain.member.dto.request.MemberEditRequestDto;
+import org.example.qpin.domain.member.dto.response.MemberEditInfoResponseDto;
 import org.example.qpin.domain.member.dto.response.MemberInfoResponseDto;
 import org.example.qpin.domain.member.service.MemberService;
 import org.springframework.http.HttpStatus;
@@ -23,13 +24,22 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/mypage/{memberId}")
+    @Operation(summary = "내 프로필 수정 조회", description = "내 프로필 수정 시 회원 정보 보여주기 API")
+    public ResponseEntity<MemberEditInfoResponseDto> memberEditInfo(@PathVariable("memberId") Long memberId) {
+
+        MemberEditInfoResponseDto response = memberService.getMemberEditInfo(memberId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PutMapping("/mypage/edit/{memberId}")
     @Operation(summary = "내 프로필 수정", description = "프로필 수정 API")
     public ResponseEntity<String> memberEdit(@PathVariable("memberId") Long memberId, @RequestBody MemberEditRequestDto request) {
 
         memberService.updateMemberInfo(request, memberId);
 
-        return ResponseEntity.status(HttpStatus.OK).body("수정 완료");
+        return ResponseEntity.status(HttpStatus.OK).body("요청에 성공하였습니다");
     }
 
 }

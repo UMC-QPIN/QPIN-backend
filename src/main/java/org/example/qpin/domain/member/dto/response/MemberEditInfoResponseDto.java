@@ -1,11 +1,11 @@
-package org.example.qpin.domain.member.dto.request;
+package org.example.qpin.domain.member.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
-public class MemberEditRequestDto {
+public class MemberEditInfoResponseDto {
 
     private String imageUrl;
     private String name;
