@@ -1,4 +1,4 @@
-package org.example.qpin.global.repository;
+package org.example.qpin.global.common.repository;
 
 import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.domain.qr.entity.Qr;

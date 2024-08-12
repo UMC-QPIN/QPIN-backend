@@ -5,17 +5,24 @@ import org.example.qpin.domain.insurance.entity.Insurance;
 import org.example.qpin.domain.member.dto.request.MemberEditRequestDto;
 import org.example.qpin.domain.member.dto.response.MemberEditInfoResponseDto;
 import org.example.qpin.domain.member.dto.response.MemberInfoResponseDto;
+import org.example.qpin.domain.member.dto.response.MemberQrDto;
 import org.example.qpin.domain.member.entity.Member;
+import org.example.qpin.domain.qr.entity.Qr;
 import org.example.qpin.global.common.repository.InsuranceRepository;
 import org.example.qpin.global.common.repository.MemberRepository;
+import org.example.qpin.global.common.repository.QrRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 
+    private final QrRepository qrRepository;
     private final MemberRepository memberRepository;
     private final InsuranceRepository insuranceRepository;
 
@@ -29,9 +36,18 @@ public class MemberService {
 
     public MemberInfoResponseDto getMemberInfo(Long memberId) {
         Member member = findMemberById(memberId);
+        List<Qr> qrList = qrRepository.findAllByMember(member);
+        List<MemberQrDto> memberQrDtoList = qrList.stream()
+            .map(qr ->new MemberQrDto(
+                    qr.getQrImage(),
+                    qr.getMemo(),
+                    qr.getSafePhoneNumber().getSafePhoneNumber(),
+                    qr.getCreatedAt().toLocalDate()
+            )).collect(Collectors.toList());
+
         return MemberInfoResponseDto.builder()
                 .name(member.getName())
-               // .dateList()
+                .memberQrDtoList(memberQrDtoList)
                 .build();
     }
 

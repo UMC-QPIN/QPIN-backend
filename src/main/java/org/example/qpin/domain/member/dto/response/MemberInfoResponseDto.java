@@ -12,7 +12,5 @@ public class MemberInfoResponseDto {
 
     private String name;
 
-    private List<LocalDate> dateList;
-
-    // TODO qr 리스트
+    private List<MemberQrDto> memberQrDtoList;
 }
