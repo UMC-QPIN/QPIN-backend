@@ -20,14 +20,11 @@ public class SafePhoneNumber extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long safePhoneNumberId;
 
-    @Column(length = 20, nullable = false)
-    private String name;
+    @Column(length = 50, nullable = false)
+    private String safePhoneNumber;
 
     @Column(length = 20, nullable = false)
     private String phoneNum;
-
-    @OneToMany(mappedBy = "safePhoneNumber",cascade = CascadeType.ALL)
-    private List<Qr> qrList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
