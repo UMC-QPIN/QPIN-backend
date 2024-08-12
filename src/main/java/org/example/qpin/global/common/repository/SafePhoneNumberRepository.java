@@ -1,4 +1,4 @@
-package org.example.qpin.global.repository;
+package org.example.qpin.global.common.repository;
 
 import org.example.qpin.domain.safephonenumber.entity.SafePhoneNumber;
 import org.springframework.data.jpa.repository.JpaRepository;
