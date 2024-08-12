@@ -23,9 +23,10 @@ public class Member extends BaseEntity {
     @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private LoginType loginType;
+    @Column
+    private String password;
+
+    private String role;
 
     @Column(length = 50,nullable = false)
     private String email;
@@ -50,4 +51,12 @@ public class Member extends BaseEntity {
         this.insurance = insurance;
     }
 
+
+    public Member (String name, String password, String role, String email, String phoneNumber){
+        this.name = name;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.phoneNumber = phoneNumber;
+    }
 }
