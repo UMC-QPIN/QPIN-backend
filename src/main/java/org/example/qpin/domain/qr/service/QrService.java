@@ -17,6 +17,7 @@ import org.example.qpin.domain.safephonenumber.entity.SafePhoneNumber;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.QrRepository;
 import org.example.qpin.global.common.repository.SafePhoneNumberRepository;
+import org.example.qpin.global.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.example.qpin.global.exception.ExceptionCode.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +41,9 @@ public class QrService {
 
     @Transactional
     public Qr createQr(SafePhoneNumber safePhoneNumber, CreateQrRequestDto request) throws WriterException, IOException{
-        Member member = memberRepository.findById(request.getMemberId()).orElseThrow();
+
+        Member member = memberRepository.findById(request.getMemberId()).orElseThrow(() -> new BadRequestException(NOT_FOUND_MEMBER_ID));
+
         Qr qr = new Qr(member, request.getMemo(), request.getMyColor(), request.getSticker(),
                 request.getGradation(), safePhoneNumber);
         qrRepository.save(qr);
@@ -102,7 +108,7 @@ public class QrService {
     @Transactional
     public List<CheckQrDto> toCheckQrDtoList(Long memberId) {
 
-        Member member = memberRepository.findById(memberId).orElseThrow();
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(NOT_FOUND_MEMBER_ID));
 
         List<Qr> qrList = qrRepository.findAllByMember(member);
         List<CheckQrDto> checkQrDtoList = qrList.stream()
