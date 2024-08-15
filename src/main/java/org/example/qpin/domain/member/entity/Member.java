@@ -6,6 +6,8 @@ import org.example.qpin.domain.insurance.entity.Insurance;
 import org.example.qpin.domain.scrap.entity.Scrap;
 import org.example.qpin.global.common.BaseEntity;
 
+import java.security.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,10 @@ public class Member extends BaseEntity {
     private String phoneNumber;
 
     private String imageUrl;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "lastLogin")
+    private LocalDateTime lastLogin;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "insurance_id")

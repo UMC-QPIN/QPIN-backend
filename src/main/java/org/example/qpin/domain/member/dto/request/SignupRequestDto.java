@@ -1,16 +1,14 @@
-package org.example.qpin.domain.login.dto.request;
+package org.example.qpin.domain.member.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class JoinDto {
+public class SignupRequestDto {
+
     private String username;
-
     private String password;
-
     private String email;
-
     private String phoneNumber;
 }
