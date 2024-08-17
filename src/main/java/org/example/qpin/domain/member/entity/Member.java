@@ -57,12 +57,16 @@ public class Member extends BaseEntity {
         this.insurance = insurance;
     }
 
+    @PreUpdate
+    public void setLastLogin() {
+        this.lastLogin = LocalDateTime.now();
+    }
 
-    public Member (String name, String password, String role, String email, String phoneNumber){
+    public Member (String name, String password, String role){
         this.name = name;
         this.password = password;
-        this.email = email;
+//        this.email = email;
         this.role = role;
-        this.phoneNumber = phoneNumber;
+//        this.phoneNumber = phoneNumber;
     }
 }

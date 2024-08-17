@@ -7,9 +7,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.qpin.domain.login.dto.request.CustomUserDetails;
 import org.example.qpin.domain.member.entity.Member;
+import org.example.qpin.global.common.repository.MemberRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -18,10 +20,12 @@ import java.io.PrintWriter;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final MemberRepository memberRepository;
 
-    public JWTFilter(JWTUtil jwtUtil) {
+    public JWTFilter(JWTUtil jwtUtil, MemberRepository memberRepository) {
 
         this.jwtUtil = jwtUtil;
+        this.memberRepository = memberRepository;
     }
 
 
@@ -35,7 +39,6 @@ public class JWTFilter extends OncePerRequestFilter {
         if (accessToken == null) {
 
             filterChain.doFilter(request, response);
-
             return;
         }
 
@@ -70,10 +73,11 @@ public class JWTFilter extends OncePerRequestFilter {
         // username, role 값을 획득
         String username = jwtUtil.getUsername(accessToken);
         String role = jwtUtil.getRole(accessToken);
-        String email = jwtUtil.getEmail(accessToken);
-        String phoneNumber = jwtUtil.getPhoneNumber(accessToken);
+//        String email = jwtUtil.getEmail(accessToken);
+//        String phoneNumber = jwtUtil.getPhoneNumber(accessToken);
 
-        Member member = new Member(username, "tempassword", role, email, phoneNumber);
+        Member member = memberRepository.findByName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 

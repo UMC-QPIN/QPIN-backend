@@ -1,6 +1,8 @@
 package org.example.qpin.global.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.qpin.domain.member.service.MemberService;
+import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.RefreshRepository;
 import org.example.qpin.global.jwt.CustomLogoutFilter;
 import org.example.qpin.global.jwt.JWTFilter;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -30,12 +33,14 @@ public class SecurityConfig {
     //JWTUtil 주입
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final MemberRepository memberRepository;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository, MemberRepository memberRepository) {
 
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Bean
@@ -61,6 +66,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Collections.singletonList("*"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -74,6 +80,7 @@ public class SecurityConfig {
 
 
         // csrf disable
+
         http
                 .csrf((auth) -> auth.disable());
 
@@ -85,14 +92,14 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/user/signup").permitAll()
+                        .requestMatchers("/login", "/", "/auth/signup", "/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
-                        .requestMatchers("swagger-ui/**","/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated());
 
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil, memberRepository), LoginFilter.class);
 
         //AuthenticationManager()와 JWTUtil 인수 전달
         http
