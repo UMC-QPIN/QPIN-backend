@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.example.qpin.domain.parking.dto.ParkingSearchReqDto;
 import org.example.qpin.domain.parking.dto.ParkingSearchResDto;
 import org.example.qpin.domain.parking.service.ParkingService;
+import org.example.qpin.global.common.response.CommonResponse;
+import org.example.qpin.global.common.response.ResponseCode;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +30,13 @@ public class ParkingController {
         double distance=parkingSearchReqDto.getDistance();
         String regionCode=parkingSearchReqDto.getRegionCode();
         return ResponseEntity.status(HttpStatus.OK).body(parkingService.findParkingNearby(latitude, longitude, distance,regionCode ));
+    }
+
+    // [Post] 주차하기 버튼
+    @PostMapping("/parking/{parkingAreaId}/{memberId}")
+    @ResponseBody
+    public CommonResponse<?> parking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") String parkingAreaId) {
+        parkingService.postParking(memberId, parkingAreaId);
+        return new CommonResponse<>(ResponseCode.SUCCESS);
     }
 }

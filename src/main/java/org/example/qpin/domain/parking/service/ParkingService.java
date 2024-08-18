@@ -1,7 +1,11 @@
 package org.example.qpin.domain.parking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.domain.parking.dto.ParkingSearchResDto;
+import org.example.qpin.domain.parking.entity.Parking;
+import org.example.qpin.domain.scrap.entity.Scrap;
+import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.ParkingRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,6 +25,11 @@ import java.util.List;
 public class ParkingService {
 
     private final ParkingRepository parkingRepository;
+    private final MemberRepository memberRepository;
+
+    public Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow();
+    }
 
     //latitude: 위도, longitude: 경도
 
@@ -101,6 +110,19 @@ public class ParkingService {
     //radian(라디안)을 10진수로 변환
     private static double rad2deg(double rad){
         return (rad * 180 / Math.PI);
+    }
+
+
+    public void postParking(Long memberId, String parkingAreaId) {
+        Member member = findMemberById(memberId);
+
+        Parking newParking = Parking.builder()
+                .member(member)
+                .parkingAreaId(parkingAreaId)
+                .build();
+
+        parkingRepository.save(newParking);
+        return;
     }
 
 }
