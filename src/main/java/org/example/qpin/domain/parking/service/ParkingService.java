@@ -2,26 +2,28 @@ package org.example.qpin.domain.parking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.qpin.domain.member.entity.Member;
+import org.example.qpin.domain.parking.dto.ParkingInfoResDto;
 import org.example.qpin.domain.parking.dto.ParkingSearchResDto;
 import org.example.qpin.domain.parking.entity.Parking;
 import org.example.qpin.domain.scrap.entity.Scrap;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.ParkingRepository;
+import org.example.qpin.global.common.repository.ScrapRepository;
 import org.example.qpin.global.exception.BadRequestException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.example.qpin.global.exception.ExceptionCode.NOT_FOUND_MEMBER_ID;
 import static org.example.qpin.global.exception.ExceptionCode.NOT_FOUND_PARKING;
 
 @Service
@@ -30,6 +32,7 @@ public class ParkingService {
 
     private final ParkingRepository parkingRepository;
     private final MemberRepository memberRepository;
+    private final ScrapRepository scrapRepository;
 
     public Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow();
@@ -137,6 +140,43 @@ public class ParkingService {
 
         parkingRepository.delete(parking);
         return;
+    }
+
+    public ParkingInfoResDto getParkingInfo(Long memberId, String parkingAreaId) {
+        Member member = findMemberById(memberId);
+
+        // parkingStatus, parkingDate, parkingTime
+        boolean parkingStatus;
+        LocalDateTime parkingDate = null;
+        int parkingTime = 0;
+
+        Optional<Parking> parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, member);
+        if (parking.isPresent()) {
+            parkingStatus = true;
+            parkingDate = parking.get().getCreatedAt();
+
+            LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(parkingDate, now);
+            parkingTime = (int) duration.toMinutes(); // 분 단위로 반환하여 전송
+        } else {
+            parkingStatus = false;
+        }
+
+        // scrapStatus
+        boolean scrapStatus;
+        Optional<Scrap> scrap = scrapRepository.findScrapByParkIdAndMember(parkingAreaId, member);
+        if (scrap.isPresent()) {
+            scrapStatus = true;
+        } else {
+            scrapStatus = false;
+        }
+
+        return ParkingInfoResDto.builder()
+                .parkingStatus(parkingStatus)
+                .scrapStatus(scrapStatus)
+                .parkingDate(parkingDate)
+                .parkingTime(parkingTime)
+                .build();
     }
 
 }

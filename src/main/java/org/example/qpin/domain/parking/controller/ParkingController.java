@@ -47,4 +47,10 @@ public class ParkingController {
         parkingService.deleteParking(memberId, parkingAreaId);
         return new CommonResponse<>(ResponseCode.SUCCESS);
     }
+
+    // [Get] 간편 주차 주차장 정보
+    @GetMapping("/parking/select/{parkingAreaId}/{memberId}")
+    public CommonResponse<?> parkingInfo(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") String parkingAreaId) {
+        return new CommonResponse<>(ResponseCode.SUCCESS, parkingService.getParkingInfo(memberId, parkingAreaId));
+    }
 }
