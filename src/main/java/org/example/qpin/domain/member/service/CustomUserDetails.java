@@ -1,4 +1,4 @@
-package org.example.qpin.domain.login.dto.request;
+package org.example.qpin.domain.member.service;
 
 import org.example.qpin.domain.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,7 +1,5 @@
-package org.example.qpin.domain.login.service;
+package org.example.qpin.domain.member.service;
 
-import lombok.RequiredArgsConstructor;
-import org.example.qpin.domain.login.dto.request.CustomUserDetails;
 import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;

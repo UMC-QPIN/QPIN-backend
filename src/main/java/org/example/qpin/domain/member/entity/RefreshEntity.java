@@ -1,4 +1,4 @@
-package org.example.qpin.domain.login.entity;
+package org.example.qpin.domain.member.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

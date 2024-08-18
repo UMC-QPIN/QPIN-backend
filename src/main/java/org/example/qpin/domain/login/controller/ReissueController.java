@@ -5,7 +5,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.example.qpin.domain.login.entity.RefreshEntity;
+import org.example.qpin.domain.member.entity.RefreshEntity;
 import org.example.qpin.global.common.repository.RefreshRepository;
 import org.example.qpin.global.jwt.JWTUtil;
 import org.springframework.http.HttpStatus;

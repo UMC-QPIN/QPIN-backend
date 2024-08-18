@@ -5,7 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.qpin.domain.login.dto.request.CustomUserDetails;
+import org.example.qpin.domain.member.service.CustomUserDetails;
 import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

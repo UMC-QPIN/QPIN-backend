@@ -3,16 +3,13 @@ package org.example.qpin.global.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.qpin.domain.login.dto.request.CustomUserDetails;
-import org.example.qpin.domain.login.entity.RefreshEntity;
+import org.example.qpin.domain.member.service.CustomUserDetails;
+import org.example.qpin.domain.member.entity.RefreshEntity;
 import org.example.qpin.domain.member.dto.request.LoginRequestDto;
 import org.example.qpin.domain.member.dto.response.LoginResponseDto;
-import org.example.qpin.domain.member.service.MemberService;
 import org.example.qpin.global.common.repository.RefreshRepository;
-import org.example.qpin.global.exception.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -77,10 +74,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             String role = auth.getAuthority();
 
             //토큰 생성
-            String access = jwtUtil.createJwt("access", name, role, 600000L);
-            String refresh = jwtUtil.createJwt("refresh", name, role, 86400000L);
+            String access = jwtUtil.createJwt("access", name, role, 1000L * 60 * 60 * 2);   // 2시간
+            String refresh = jwtUtil.createJwt("refresh", name, role, 1000L * 60 * 60 * 24 * 14);   // 2주
 
-            addRefreshEntity(name, refresh, 86400000L);
+            addRefreshEntity(name, refresh, 1000L * 60 * 60 * 24 * 14);
 
             LoginResponseDto responseDto = LoginResponseDto.builder()
                     .memberId(((CustomUserDetails) authentication.getPrincipal()).getMemberId())
@@ -105,23 +102,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
-    private void addRefreshEntity(String email, String refresh, Long expiredMs) {
+    private void addRefreshEntity(String name, String refresh, Long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 
-        RefreshEntity refreshEntity = new RefreshEntity(email, refresh, date.toString());
+        RefreshEntity refreshEntity = new RefreshEntity(name, refresh, date.toString());
 
         refreshRepository.save(refreshEntity);
-    }
-
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
     }
 }

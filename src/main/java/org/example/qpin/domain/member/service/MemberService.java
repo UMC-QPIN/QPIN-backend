@@ -1,20 +1,20 @@
 package org.example.qpin.domain.member.service;
 
 import com.google.zxing.WriterException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.example.qpin.domain.insurance.entity.Insurance;
 import org.example.qpin.domain.member.dto.request.LoginRequestDto;
 import org.example.qpin.domain.member.dto.request.MemberEditRequestDto;
 import org.example.qpin.domain.member.dto.request.SignupRequestDto;
-import org.example.qpin.domain.member.dto.response.LoginResponseDto;
-import org.example.qpin.domain.member.dto.response.MemberEditInfoResponseDto;
-import org.example.qpin.domain.member.dto.response.MemberInfoResponseDto;
-import org.example.qpin.domain.member.dto.response.MemberQrDto;
+import org.example.qpin.domain.member.dto.response.*;
 import org.example.qpin.domain.member.entity.Member;
+import org.example.qpin.domain.member.entity.RefreshEntity;
 import org.example.qpin.domain.qr.entity.Qr;
 import org.example.qpin.global.common.repository.InsuranceRepository;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.QrRepository;
+import org.example.qpin.global.common.repository.RefreshRepository;
 import org.example.qpin.global.common.response.ResponseCode;
 import org.example.qpin.global.exception.BadRequestException;
 import org.example.qpin.global.jwt.JWTUtil;
@@ -22,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -40,6 +41,7 @@ public class MemberService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     // 회원가입 조건 체크
     public boolean checkSignupCondition(SignupRequestDto request) {
@@ -89,12 +91,58 @@ public class MemberService {
         memberRepository.save(newMember);
     }
 
+    // 토큰 재발급
+    @Transactional
+    public TokenResponseDto reissueToken(String refreshToken){
+        if (refreshToken == null) {
+            throw new BadRequestException(NOT_FOUND_REFRESH_TOKEN);
+        }
+
+        // 만료 여부 체크
+        try {
+            jwtUtil.isExpired(refreshToken);
+        } catch (ExpiredJwtException e) {
+            throw new BadRequestException(EXPIRED_PERIOD_REFRESH_TOKEN);
+        }
+
+        // refresh token인지 확인
+        String category = jwtUtil.getCategory(refreshToken);
+        if (!category.equals("refresh")) {
+            throw new BadRequestException(INVALID_REFRESH_TOKEN);
+        }
+
+        // refresh token이 DB에 있는지 확인
+        Boolean isExist = refreshRepository.existsByRefresh(refreshToken);
+        if (!isExist) {
+            throw new BadRequestException(NOT_FOUND_REFRESH_TOKEN);
+        }
+
+        String username = jwtUtil.getUsername(refreshToken);
+        String role = jwtUtil.getRole(refreshToken);
+
+        // 새로운 jwt 토큰 발급
+        String newAccess = jwtUtil.createJwt("access", username, role, 1000L * 60 * 60 * 2);    // 2시간
+        String newRefresh = jwtUtil.createJwt("refresh", username, role, 1000L * 60 * 60 * 24 * 14);    // 2주
+
+        // 새로운 refresh token을 DB에 저장
+        refreshRepository.deleteByRefresh(refreshToken);
+        addRefreshEntity(username, newRefresh, 1000L * 60 * 60 * 24 * 14);
+
+        return new TokenResponseDto(newAccess, newRefresh);
+    }
+
+    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+        RefreshEntity refreshEntity = new RefreshEntity(username, refresh, date.toString());
+        refreshRepository.save(refreshEntity);
+    }
+
     public Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow();
+        return memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(NOT_FOUND_MEMBER_ID));
     }
 
     public Insurance findInsuranceById(Long insuranceId) {
-        return insuranceRepository.findById(insuranceId).orElseThrow();
+        return insuranceRepository.findById(insuranceId).orElseThrow(() -> new BadRequestException(NOT_FOUND_MEMBER_ID));
     }
 
     public MemberInfoResponseDto getMemberInfo(Long memberId) {
