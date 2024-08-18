@@ -38,13 +38,13 @@ public class ParkingService {
         return memberRepository.findById(memberId).orElseThrow();
     }
 
-    //latitude: 위도, longitude: 경도
+    //latitude: 위도, longtitude: 경도
 
     /**
      * 위도와 경도, 거리, 지역 코드를 입력하면
      * 해당 위치로부터 입력한 거리 이내의 주차장의 정보를 반환함.
      */
-    public List<ParkingSearchResDto> findParkingNearby(double mylatitude, double mylongitude, double distance, String regionCode) throws ParseException {
+    public List<ParkingSearchResDto> findParkingNearby(double mylatitude, double mylongtitude, double distance, String regionCode) throws ParseException {
         final int page=1;
         final int perPage=150;
         final String DECODING_KEY="yncOh3M5FtqbW1UwmQmkBKpkkyYqZMj1FddwHcalnFzVCFtnlwkDOhRPFHkhnJPRKYy4scMVfbJMxn954Ym/Eg=="; //키 암호화 필요
@@ -77,18 +77,27 @@ public class ParkingService {
         for(int i=0; i<dataList.size(); i++){
             JSONObject data=(JSONObject) dataList.get(i); //해당되는 주차장이 없으면 null예외처리 해야함. 500에러 발생.
             double latitude=Double.parseDouble((String) data.get("위도"));
-            double longitude=Double.parseDouble((String) data.get("경도"));
+            double longtitude=Double.parseDouble((String) data.get("경도"));
             /**
              * 설정한 거리보다 가까운 주차장만 리스트에 추가
              */
-            if(distance>=distance(mylatitude, mylongitude, latitude, longitude)){
-                ParkingSearchResDto parkingSearchResDto =new ParkingSearchResDto().builder()
+
+            double parkingDistance = distance(mylatitude, mylongtitude, latitude, longtitude);
+            if(distance>=parkingDistance){
+                ParkingSearchResDto parkingSearchResDto = new ParkingSearchResDto().builder()
                         .latitude(latitude)
-                        .longitude(longitude)
+                        .longtitude(longtitude)
                         .parkId(Long.parseLong((String) data.get("주차장관리번호")))
                         .name((String) data.get("주차장명"))
                         .address((String) data.get("주차장도로명주소"))
                         .price((String) data.get("요금정보"))
+                        .parkingDistance(parkingDistance)
+                        .weekStartTime((String) data.get("평일운영시작시각"))
+                        .weekEndTime((String) data.get("평일운영종료시각"))
+                        .SaturdayStartTime((String) data.get("토요일운영시작시각"))
+                        .SaturdayEndTime((String) data.get("토요일운영종료시각"))
+                        .HolidayStartTime((String) data.get("공휴일운영시작시각"))
+                        .HolidayEndTime((String) data.get("공휴일운영종료시각"))
                         .build();
                 parkingSearchResDtoList.add(parkingSearchResDto);
             }

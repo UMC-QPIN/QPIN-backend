@@ -26,7 +26,7 @@ public class ParkingController {
     public ResponseEntity<List<ParkingSearchResDto>> findParkingNearby(@RequestBody ParkingSearchReqDto parkingSearchReqDto) throws ParseException {
 
         double latitude=parkingSearchReqDto.getLatitude();
-        double longitude=parkingSearchReqDto.getLongitude();
+        double longitude=parkingSearchReqDto.getLongtitude();
         double distance=parkingSearchReqDto.getDistance();
         String regionCode=parkingSearchReqDto.getRegionCode();
         return ResponseEntity.status(HttpStatus.OK).body(parkingService.findParkingNearby(latitude, longitude, distance,regionCode ));
