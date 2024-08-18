@@ -39,4 +39,12 @@ public class ParkingController {
         parkingService.postParking(memberId, parkingAreaId);
         return new CommonResponse<>(ResponseCode.SUCCESS);
     }
+
+    // [Delete] 주차하기 버튼 해제
+    @DeleteMapping("/parking/{parkingAreaId}/{memberId}")
+    @ResponseBody
+    public CommonResponse<?> deleteParking(@PathVariable("memberId") Long memberId, @PathVariable("parkingAreaId") String parkingAreaId) {
+        parkingService.deleteParking(memberId, parkingAreaId);
+        return new CommonResponse<>(ResponseCode.SUCCESS);
+    }
 }

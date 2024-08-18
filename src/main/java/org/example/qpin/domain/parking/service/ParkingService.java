@@ -7,6 +7,7 @@ import org.example.qpin.domain.parking.entity.Parking;
 import org.example.qpin.domain.scrap.entity.Scrap;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.ParkingRepository;
+import org.example.qpin.global.exception.BadRequestException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,6 +20,9 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.qpin.global.exception.ExceptionCode.NOT_FOUND_MEMBER_ID;
+import static org.example.qpin.global.exception.ExceptionCode.NOT_FOUND_PARKING;
 
 @Service
 @RequiredArgsConstructor
@@ -122,6 +126,16 @@ public class ParkingService {
                 .build();
 
         parkingRepository.save(newParking);
+        return;
+    }
+
+    public void deleteParking(Long memberId, String parkingAreaId) {
+        Member member = findMemberById(memberId);
+
+        Parking parking = parkingRepository.findParkingByParkingAreaIdAndMember(parkingAreaId, member)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_PARKING));
+
+        parkingRepository.delete(parking);
         return;
     }
 
