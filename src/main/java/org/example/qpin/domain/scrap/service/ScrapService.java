@@ -5,7 +5,6 @@ import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.domain.scrap.entity.Scrap;
 import org.example.qpin.global.common.repository.MemberRepository;
 import org.example.qpin.global.common.repository.ScrapRepository;
-import org.example.qpin.global.common.response.CustomException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +18,7 @@ public class ScrapService {
         return memberRepository.findById(memberId).orElseThrow();
     }
 
-    public void postScrap(Long memberId, String parkId) throws CustomException {
+    public void postScrap(Long memberId, String parkId) {
         Member member = findMemberById(memberId);
 
         Scrap newScrap = Scrap.builder()
