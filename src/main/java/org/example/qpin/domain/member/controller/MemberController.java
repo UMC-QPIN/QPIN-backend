@@ -44,13 +44,9 @@ public class MemberController {
         }
 
         try {
-            // Reissue tokens using the service
             TokenResponseDto tokenResponseDto = memberService.reissueToken(refreshToken);
-
-            // Return response with new tokens in JSON format
             return new ResponseEntity<>(tokenResponseDto, HttpStatus.OK);
         } catch (BadRequestException e) {
-            // Return bad request with the error message
             return new ResponseEntity<>(new TokenResponseDto(e.getMessage(), ""), HttpStatus.BAD_REQUEST);
         }
 
