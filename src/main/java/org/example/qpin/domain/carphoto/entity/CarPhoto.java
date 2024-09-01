@@ -16,8 +16,11 @@ public class CarPhoto extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long carPhotoId;
 
+    @Column(nullable = false)
+    private String carPhotoUrl;
+
     @Column(length = 50, nullable = false)
-    private String ParkingArea;
+    private String parkingArea;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

@@ -5,8 +5,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.qpin.domain.member.entity.Member;
 import org.example.qpin.domain.safephonenumber.entity.SafePhoneNumber;
 import org.example.qpin.global.common.BaseEntity;
+import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
@@ -16,6 +18,10 @@ public class Qr extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long qrId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member member;
 
     @Column
     private String memo;
@@ -36,4 +42,37 @@ public class Qr extends BaseEntity {
     @JoinColumn(name="safe_phone_number_id")
     private SafePhoneNumber safePhoneNumber;
 
+    @Column
+    private String qrUrl;
+
+    @Lob
+    @Column(name = "qr_image", columnDefinition = "MEDIUMBLOB")
+    @Comment("QR 이미지")
+    private byte[] qrImage;
+
+    public Qr(Member member,String memo,MyColor myColor, Sticker sticker, int gradation, SafePhoneNumber safePhoneNumber){
+        this.member = member;
+        this.memo = memo;
+        this.myColor = myColor;
+        this.sticker = sticker;
+        this.gradation = gradation;
+        this.safePhoneNumber = safePhoneNumber;
+    }
+
+    public void setQrUrl(String qrUrl){
+        this.qrUrl = qrUrl;
+    }
+
+    public void setQrImage(byte[] qrImage) {
+        this.qrImage = qrImage;
+    }
+
+    public void modifyQr(String memo,MyColor myColor, Sticker sticker, int gradation,
+                         SafePhoneNumber safePhoneNumber){
+        this.memo = memo;
+        this.myColor = myColor;
+        this.sticker = sticker;
+        this.gradation = gradation;
+        this.safePhoneNumber = safePhoneNumber;
+    }
 }
