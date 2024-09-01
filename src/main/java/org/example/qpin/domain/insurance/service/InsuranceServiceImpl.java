@@ -1,12 +1,13 @@
 package org.example.qpin.domain.insurance.service;
 
 import org.example.qpin.domain.insurance.entity.Insurance;
-import org.example.qpin.domain.insurance.repository.InsuranceRepository;
+
 import org.example.qpin.domain.insurancenumber.dto.InsuranceNumberDto;
 import org.example.qpin.domain.insurancenumber.entity.InsuranceNumber;
 import org.example.qpin.domain.insurancenumber.repository.InsuranceNumberRepository;
 import org.example.qpin.domain.member.entity.Member;
-import org.example.qpin.domain.member.repository.MemberRepository;
+import org.example.qpin.global.common.repository.InsuranceRepository;
+import org.example.qpin.global.common.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

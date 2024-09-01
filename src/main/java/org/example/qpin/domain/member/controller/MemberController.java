@@ -7,8 +7,6 @@ import org.example.qpin.domain.member.dto.response.TokenResponseDto;
 import org.example.qpin.domain.member.service.CustomUserDetails;
 import org.example.qpin.domain.member.dto.request.MemberEditRequestDto;
 import org.example.qpin.domain.member.dto.request.SignupRequestDto;
-import org.example.qpin.domain.member.dto.response.MemberEditInfoResponseDto;
-import org.example.qpin.domain.member.dto.response.MemberInfoResponseDto;
 import org.example.qpin.domain.member.service.MemberService;
 import org.example.qpin.global.common.response.CommonResponse;
 import org.example.qpin.global.common.response.ResponseCode;

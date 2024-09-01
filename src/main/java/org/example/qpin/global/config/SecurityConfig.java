@@ -94,7 +94,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/auth/signup", "/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/auth/reissue").permitAll()
+                        .requestMatchers("/auth/reissue","/hc", "/env").permitAll()
                         .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated());
 

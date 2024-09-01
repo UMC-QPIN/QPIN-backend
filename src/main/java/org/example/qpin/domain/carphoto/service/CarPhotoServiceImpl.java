@@ -3,9 +3,9 @@ package org.example.qpin.domain.carphoto.service;
 import org.example.qpin.domain.carphoto.dto.CarPhotoRequestDto;
 import org.example.qpin.domain.carphoto.dto.CarPhotoResponseDto;
 import org.example.qpin.domain.carphoto.entity.CarPhoto;
-import org.example.qpin.domain.carphoto.repository.CarPhotoRepository;
+import org.example.qpin.global.common.repository.CarPhotoRepository;
 import org.example.qpin.domain.member.entity.Member;
-import org.example.qpin.domain.member.repository.MemberRepository;
+import org.example.qpin.global.common.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
