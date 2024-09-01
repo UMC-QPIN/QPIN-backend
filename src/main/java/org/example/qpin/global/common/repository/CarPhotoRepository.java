@@ -1,4 +1,4 @@
-package org.example.qpin.domain.carphoto.repository;
+package org.example.qpin.global.common.repository;
 
 import org.example.qpin.domain.carphoto.entity.CarPhoto;
 import org.springframework.data.jpa.repository.JpaRepository;
