@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import java.util.TreeMap;
 
+//서버 연결 상태 확인 컨트롤러
 @RestController
 public class HealthCheckController {
 
